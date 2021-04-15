@@ -22,7 +22,11 @@ async function main () {
       if (process.argv.length !== 3) {
         usage();
       }
-      let wormhole = await factory.start()
+
+      let code = await factory.getCode()
+      console.log('wormhole code:', code)
+
+      let wormhole = await factory.announce(code)
 
       process.stdin.on('data', async (data) => {
         wormhole.send({ offer: { message: data.toString() }});
@@ -55,7 +59,7 @@ async function main () {
       }
       console.log('got message:');
       console.log(offerObj.offer.message);
-        wormhole.send({ answer: { message_ack: "ok" }});
+      wormhole.send({ answer: { message_ack: "ok" }});
       process.exit(0)
 
       break;

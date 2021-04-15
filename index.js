@@ -59,18 +59,18 @@ class WormholeClient {
     let connection = await encrypted.init(unencryptedChannel, this.side, code)
     let wormhole = new EasyWormhole(connection)
     await wormhole.checkVersion()
-
-    console.log('established secure channel!');
     return wormhole
   }
 
-
-  async start () {
+  async getCode () {
     let rendezvousChannel = await rendezvous.init(this.url);
-    let unencryptedChannel = await unencrypted.initSender(rendezvousChannel, this.side)
-    let code = unencryptedChannel.nameplate + '-' + defaultEphemeralPassword
-    console.log('wormhole code:', code)
-    let wormhole = await this._createWormhole(unencryptedChannel, code)
+    this.unencryptedChannel = await unencrypted.initSender(rendezvousChannel, this.side)
+    let code = this.unencryptedChannel.nameplate + '-' + defaultEphemeralPassword
+    return code
+  }
+
+  async announce (code) {
+    let wormhole = await this._createWormhole(this.unencryptedChannel, code)
     return wormhole
   }
 
