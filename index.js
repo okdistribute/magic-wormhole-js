@@ -11,6 +11,7 @@ let defaultEphemeralPassword = 'test-test'; // only used for sending the string 
 class EasyWormhole {
   constructor (connection) {
     this.wormhole = connection
+    this.key = this.wormhole.key
   }
 
   send (messageToSend) {
