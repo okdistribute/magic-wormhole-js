@@ -56,7 +56,7 @@ class WormholeClient {
   }
 
   async _createWormhole (unencryptedChannel, code) {
-    let connection = await encrypted.init(unencryptedChannel, this.side, code)
+    let connection = await encrypted.initialize(unencryptedChannel, this.side, code)
     let wormhole = new EasyWormhole(connection)
     await wormhole.checkVersion()
     return wormhole
@@ -70,6 +70,7 @@ class WormholeClient {
   }
 
   async announce (code) {
+    if (!code) throw new Error('code required as argument to announce')
     let wormhole = await this._createWormhole(this.unencryptedChannel, code)
     return wormhole
   }

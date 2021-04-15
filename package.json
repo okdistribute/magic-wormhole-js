@@ -19,6 +19,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@aws-crypto/hkdf-node": "^1.0.0",
+    "isomorphic-ws": "^4.0.1",
     "tweetnacl": "^1.0.1",
     "ws": "^7.2.1"
   },
