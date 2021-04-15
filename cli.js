@@ -27,7 +27,7 @@ async function main () {
       process.stdin.on('data', async (data) => {
         wormhole.send({ offer: { message: data.toString() }});
         let msg = await wormhole.receive()
-        console.log(msg)
+        process.exit(0)
       })
       break;
     }
@@ -55,12 +55,8 @@ async function main () {
       }
       console.log('got message:');
       console.log(offerObj.offer.message);
-
-      process.stdin.on('data', async (data) => {
-        wormhole.send({ answer: { message_ack: 'ok', some_other_metadata: data.toString() }});
-        let msg = await wormhole.receive()
-        console.log(msg)
-      })
+        wormhole.send({ answer: { message_ack: "ok" }});
+      process.exit(0)
 
       break;
     }

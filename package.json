@@ -7,6 +7,7 @@
     "build": "./build-spake2-wasm.sh",
     "clean": "rm -rf spake2-wasm/pkg spake2-wasm/target"
   },
+  "main": "index.js",
   "bin": "./cli.js",
   "repository": {
     "type": "git",
