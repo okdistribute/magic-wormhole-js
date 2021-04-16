@@ -18,7 +18,7 @@ async function main () {
     case '--help': {
       usage(0);
     }
-    case 'send-demo': {
+    case 'send': {
       if (process.argv.length !== 3) {
         usage();
       }
@@ -76,7 +76,7 @@ function usage(code = 1) {
   console.log(`Usage: node ${process.argv[1]} [command]
 
 Commands:
-  send-demo       send sample text over wormhole
+  send            send sample text over wormhole
   receive <code>  receive text over wormhole`);
   process.exit(code);
 }

@@ -1,12 +1,9 @@
 let rendezvous = require('./lib/rendezvous.js');
 let unencrypted = require('./lib/unencrypted.js');
 let encrypted = require('./lib/encrypted.js');
+let diceware = require('eff-diceware-passphrase');
 
 let { panic, decodeAscii, encodeAscii } = require('./lib/util.js');
-
-//TODO: this should be on the wormhole object
-
-let defaultEphemeralPassword = 'test-test'; // only used for sending the string 'example'
 
 class EasyWormhole {
   constructor (connection) {
@@ -68,7 +65,8 @@ class WormholeClient {
   async start () {
     let rendezvousChannel = await rendezvous.init(this.url);
     let unencryptedChannel = await unencrypted.initSender(rendezvousChannel, this.side)
-    let code = unencryptedChannel.nameplate + '-' + defaultEphemeralPassword
+    let password = diceware.entropy(16).join('-')
+    let code = unencryptedChannel.nameplate + '-' + password
     console.log('wormhole code:', code)
     let wormhole = await this._createWormhole(unencryptedChannel, code)
     return wormhole
