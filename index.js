@@ -3,7 +3,7 @@ let unencrypted = require('./lib/unencrypted.js');
 let encrypted = require('./lib/encrypted.js');
 let diceware = require('eff-diceware-passphrase');
 
-let { panic, decodeAscii, encodeAscii } = require('./lib/util.js');
+let { decodeAscii, encodeAscii } = require('./lib/util.js');
 
 class SecureWormhole {
   constructor (connection) {
@@ -11,26 +11,25 @@ class SecureWormhole {
     this.key = this.wormhole.key
   }
 
-  send (messageToSend) {
-    this.wormhole.send('0', encodeAscii(JSON.stringify(messageToSend)));
+  send (messageToSend, phase = '0') {
+    this.wormhole.send(phase, encodeAscii(JSON.stringify(messageToSend)));
   }
 
-  async receive () {
-    let msg = await this.waitForPhase('0');
+  async receive (phase = '0') {
+    let msg = await this.waitForPhase(phase);
     let decoded = JSON.parse(decodeAscii(msg));
     return decoded
   }
 
-  async checkVersion () {
-    this.wormhole.send('version', encodeAscii(JSON.stringify({ app_versions: {} })))
+  async checkVersion (app_versions = {}) {
+    this.wormhole.send('version', encodeAscii(JSON.stringify({ app_versions: app_versions })))
 
     let versionBytes = await this.waitForPhase('version');
     if (versionBytes === null) {
       throw new Error('failed to establish secure channel');
     }
     let theirVersion = decodeAscii(versionBytes);
-    // TODO confirm version information, maybe?
-    return
+    return theirVersion
   }
 
 
@@ -56,7 +55,6 @@ class WormholeClient {
   async _createWormhole (unencryptedChannel, password) {
     let connection = await encrypted.initialize(unencryptedChannel, this.side, password)
     let wormhole = new SecureWormhole(connection)
-    await wormhole.checkVersion()
     return wormhole
   }
 
