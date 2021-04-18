@@ -13,14 +13,18 @@
     "type": "git",
     "url": "https://github.com/bakkot/magic-wormhole-js.git"
   },
+  "browser": {
+    "./lib/spake2.js": "./lib/spake2.browser.js"
+  },
   "bugs": {
     "url": "https://github.com/bakkot/magic-wormhole-js/issues"
   },
+  "sourceType": "module",
   "license": "Apache-2.0",
   "dependencies": {
     "@aws-crypto/hkdf-node": "^1.0.0",
+    "eff-diceware-passphrase": "github:okdistribute/eff-diceware-passphrase#browser",
     "isomorphic-ws": "^4.0.1",
-    "eff-diceware-passphrase": "^3.0.0",
     "tweetnacl": "^1.0.1",
     "ws": "^7.2.1"
   },
