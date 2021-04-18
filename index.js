@@ -53,8 +53,8 @@ class WormholeClient {
     this.side = opts.side || Math.floor(Math.random() * 2 ** 40).toString(16)
   }
 
-  async _createWormhole (unencryptedChannel, code) {
-    let connection = await encrypted.initialize(unencryptedChannel, this.side, code)
+  async _createWormhole (unencryptedChannel, password) {
+    let connection = await encrypted.initialize(unencryptedChannel, this.side, password)
     let wormhole = new SecureWormhole(connection)
     await wormhole.checkVersion()
     return wormhole
@@ -70,20 +70,26 @@ class WormholeClient {
 
   async announce (code) {
     if (!code) throw new Error('code required as argument to announce')
-    let wormhole = await this._createWormhole(this.unencryptedChannel, code)
+    let [nameplate, password] = this._parts(code)
+    let wormhole = await this._createWormhole(this.unencryptedChannel, password)
     return wormhole
   }
 
-  async accept (code) {
+  _parts (code) {
     let dash = code.indexOf('-');
     if (dash === -1) {
       throw new Error('Code must be of the form 0-wormhole-code');
     }
     let nameplate = code.slice(0, dash);
-    let rendezvousChannel = await rendezvous.init(this.url);
-    let unencryptedChannel = await unencrypted.initReceiver(rendezvousChannel, this.side, nameplate)
+    let password = code.slice(dash + 1);
+    return [nameplate, password]
+  }
 
-    let wormhole = await this._createWormhole(unencryptedChannel, code)
+  async accept (code) {
+    let rendezvousChannel = await rendezvous.init(this.url);
+    let [nameplate, password] = this._parts(code)
+    let unencryptedChannel = await unencrypted.initReceiver(rendezvousChannel, this.side, nameplate)
+    let wormhole = await this._createWormhole(unencryptedChannel, password)
     return wormhole
   }
 }
