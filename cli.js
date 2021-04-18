@@ -41,15 +41,14 @@ async function main () {
         usage();
       }
       let codeArg = process.argv[3];
-      let dash = codeArg.indexOf('-');
-      if (dash === -1) {
-        console.error('Code must be of the form 0-wormhole-code');
-        usage();
+      let wormhole, offerObj
+      try {
+        wormhole = await factory.accept(codeArg);
+        offerObj = await wormhole.receive()
+      } catch (err) {
+        console.error(err)
+        usage()
       }
-      let nameplate = codeArg.slice(0, dash);
-      let ephemeralPassword = codeArg.slice(dash + 1);
-      let wormhole = await factory.accept(nameplate, ephemeralPassword);
-      let offerObj = await wormhole.receive()
 
       if ({}.hasOwnProperty.call(offerObj, 'transit')) {
         panic('files/directories are not supported');

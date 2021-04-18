@@ -5,7 +5,7 @@ let diceware = require('eff-diceware-passphrase');
 
 let { panic, decodeAscii, encodeAscii } = require('./lib/util.js');
 
-class EasyWormhole {
+class SecureWormhole {
   constructor (connection) {
     this.wormhole = connection
     this.key = this.wormhole.key
@@ -55,7 +55,7 @@ class WormholeClient {
 
   async _createWormhole (unencryptedChannel, code) {
     let connection = await encrypted.initialize(unencryptedChannel, this.side, code)
-    let wormhole = new EasyWormhole(connection)
+    let wormhole = new SecureWormhole(connection)
     await wormhole.checkVersion()
     return wormhole
   }
@@ -64,7 +64,7 @@ class WormholeClient {
     let rendezvousChannel = await rendezvous.init(this.url);
     this.unencryptedChannel = await unencrypted.initSender(rendezvousChannel, this.side)
     let password = diceware.entropy(16).join('-')
-    let code = unencryptedChannel.nameplate + '-' + password
+    let code = this.unencryptedChannel.nameplate + '-' + password
     return code
   }
 
@@ -74,15 +74,19 @@ class WormholeClient {
     return wormhole
   }
 
-  async accept (nameplate = null, ephemeralPassword = null) {
+  async accept (code) {
+    let dash = code.indexOf('-');
+    if (dash === -1) {
+      throw new Error('Code must be of the form 0-wormhole-code');
+    }
+    let nameplate = code.slice(0, dash);
     let rendezvousChannel = await rendezvous.init(this.url);
     let unencryptedChannel = await unencrypted.initReceiver(rendezvousChannel, this.side, nameplate)
-    let code = nameplate + '-' + ephemeralPassword
 
     let wormhole = await this._createWormhole(unencryptedChannel, code)
     return wormhole
   }
 }
 
-module.exports = WormholeClient
+module.exports = { WormholeClient, SecureWormhole }
 
