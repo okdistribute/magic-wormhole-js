@@ -59,8 +59,8 @@ class WormholeClient {
   }
 
   async getCode () {
-    let rendezvousChannel = await rendezvous.init(this.url);
-    this.unencryptedChannel = await unencrypted.initSender(rendezvousChannel, this.side)
+    this.rendezvousChannel = await rendezvous.init(this.url);
+    this.unencryptedChannel = await unencrypted.initSender(this.rendezvousChannel, this.side)
     let password = diceware.entropy(16).join('-')
     let code = this.unencryptedChannel.nameplate + '-' + password
     return code
@@ -70,6 +70,8 @@ class WormholeClient {
     if (!code) throw new Error('code required as argument to announce')
     let [nameplate, password] = this._parts(code)
     let wormhole = await this._createWormhole(this.unencryptedChannel, password)
+    this.rendezvousChannel = null
+    this.unencryptedChannel = null
     return wormhole
   }
 
@@ -84,11 +86,21 @@ class WormholeClient {
   }
 
   async accept (code) {
-    let rendezvousChannel = await rendezvous.init(this.url);
+    this.rendezvousChannel = await rendezvous.init(this.url);
     let [nameplate, password] = this._parts(code)
-    let unencryptedChannel = await unencrypted.initReceiver(rendezvousChannel, this.side, nameplate)
+    let unencryptedChannel = await unencrypted.initReceiver(this.rendezvousChannel, this.side, nameplate)
     let wormhole = await this._createWormhole(unencryptedChannel, password)
+    this.rendezvousChannel = null
     return wormhole
+  }
+
+  async close () {
+    if (this.rendezvousChannel) {
+      this.rendezvousChannel.close()
+      this.rendezvousChannel = null
+      console.log('closing')
+    }
+    throw new Error('no channel open!')
   }
 }
 
