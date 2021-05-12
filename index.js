@@ -61,7 +61,7 @@ class WormholeClient {
   async getCode () {
     this.rendezvousChannel = await rendezvous.init(this.url);
     this.unencryptedChannel = await unencrypted.initSender(this.rendezvousChannel, this.side)
-    let password = diceware.generatePassphrase(2).join('-')
+    let password = diceware.generatePassphrase(4).join('-')
     let code = this.unencryptedChannel.nameplate + '-' + password
     return code
   }
