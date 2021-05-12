@@ -1,7 +1,7 @@
 let rendezvous = require('./lib/rendezvous.js');
 let unencrypted = require('./lib/unencrypted.js');
 let encrypted = require('./lib/encrypted.js');
-let diceware = require('eff-diceware-passphrase');
+let diceware = require('niceware');
 
 let { decodeAscii, encodeAscii } = require('./lib/util.js');
 
@@ -61,7 +61,7 @@ class WormholeClient {
   async getCode () {
     this.rendezvousChannel = await rendezvous.init(this.url);
     this.unencryptedChannel = await unencrypted.initSender(this.rendezvousChannel, this.side)
-    let password = diceware.entropy(16).join('-')
+    let password = diceware.generatePassphrase(2).join('-')
     let code = this.unencryptedChannel.nameplate + '-' + password
     return code
   }
