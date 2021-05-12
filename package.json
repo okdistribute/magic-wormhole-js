@@ -23,8 +23,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@aws-crypto/hkdf-node": "^1.0.0",
+    "eff-diceware-passphrase": "github:okdistribute/eff-diceware-passphrase#browser",
     "isomorphic-ws": "^4.0.1",
-    "niceware": "^2.0.2",
     "tweetnacl": "^1.0.1",
     "ws": "^7.2.1"
   },
