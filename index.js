@@ -11,7 +11,7 @@ class SecureWormhole {
     this.key = this.wormhole.key
   }
 
-  send (messageToSend, phase = '0') {
+  async send (messageToSend, phase = '0') {
     this.wormhole.send(phase, encodeAscii(JSON.stringify(messageToSend)));
   }
 
@@ -55,6 +55,7 @@ class WormholeClient {
   async _createWormhole (unencryptedChannel, password) {
     let connection = await encrypted.initialize(unencryptedChannel, this.side, password)
     let wormhole = new SecureWormhole(connection)
+    await wormhole.checkVersion()
     return wormhole
   }
 
@@ -98,7 +99,6 @@ class WormholeClient {
     if (this.rendezvousChannel) {
       this.rendezvousChannel.close()
       this.rendezvousChannel = null
-      console.log('closing')
     }
     throw new Error('no channel open!')
   }
