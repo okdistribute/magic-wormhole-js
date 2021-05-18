@@ -4,10 +4,10 @@
   "description": "AN UNOFFICIAL PORT: get things from one computer to another, safely",
   "author": "Kevin Gibbons",
   "scripts": {
-    "build": "./build-spake2-wasm.sh",
+    "build": "browserify -t brfs index.js -o dist/index.js",
     "clean": "rm -rf spake2-wasm/pkg spake2-wasm/target spake2-wasm/web"
   },
-  "main": "index.js",
+  "main": "dist/index.js",
   "bin": "./cli.js",
   "repository": {
     "type": "git",
@@ -29,6 +29,8 @@
     "ws": "^7.2.1"
   },
   "devDependencies": {
+    "brfs": "^2.0.2",
+    "browserify": "^17.0.0",
     "minimist": "^1.2.5"
   }
 }
