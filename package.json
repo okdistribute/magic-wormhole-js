@@ -4,7 +4,7 @@
   "description": "AN UNOFFICIAL PORT: get things from one computer to another, safely",
   "author": "Kevin Gibbons",
   "scripts": {
-    "build": "browserify -t brfs index.js -o dist/index.js",
+    "build": "rimraf dist && webpack",
     "clean": "rm -rf spake2-wasm/pkg spake2-wasm/target spake2-wasm/web"
   },
   "main": "dist/index.js",
@@ -23,14 +23,21 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@aws-crypto/hkdf-node": "^1.0.0",
+    "@babel/preset-env": "^7.14.2",
+    "babel": "^6.23.0",
+    "babel-loader": "^8.2.2",
     "bip39": "^3.0.4",
     "isomorphic-ws": "^4.0.1",
     "tweetnacl": "^1.0.1",
     "ws": "^7.2.1"
   },
   "devDependencies": {
-    "brfs": "^2.0.2",
-    "browserify": "^17.0.0",
-    "minimist": "^1.2.5"
+    "@wasm-tool/wasm-pack-plugin": "^1.1.0",
+    "babel-plugin-static-fs": "^3.0.0",
+    "copy-webpack-plugin": "^5.0.3",
+    "minimist": "^1.2.5",
+    "rimraf": "^3.0.2",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.3"
   }
 }

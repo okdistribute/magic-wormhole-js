@@ -8,7 +8,7 @@ let crypto = require('crypto')
 
 let { decodeAscii, encodeAscii } = require('./lib/util.js');
 
-class SecureWormhole {
+export class SecureWormhole {
   constructor (connection) {
     this.wormhole = connection
     this.key = this.wormhole.key
@@ -49,7 +49,7 @@ class SecureWormhole {
   }
 }
 
-class WormholeClient {
+export class WormholeClient {
   constructor (url, appid, opts) {
     if (!opts) opts = {}
     this.url = url
@@ -122,6 +122,3 @@ class WormholeClient {
     throw new Error('no channel open!')
   }
 }
-
-module.exports = { WormholeClient, SecureWormhole }
-
