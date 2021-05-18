@@ -11,7 +11,7 @@ class SecureWormhole {
     this.key = this.wormhole.key
   }
 
-  async send (messageToSend, phase = '0') {
+  send (messageToSend, phase = '0') {
     this.wormhole.send(phase, encodeAscii(JSON.stringify(messageToSend)));
   }
 
