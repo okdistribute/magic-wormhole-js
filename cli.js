@@ -4,6 +4,7 @@
 
 let { WormholeClient } = require('.')
 let { panic, decodeAscii, encodeAscii } = require('./lib/util.js');
+let argv = require('minimist')(process.argv.slice(2));
 
 let url = 'ws://relay.magic-wormhole.io:4000/v1';
 let appid = 'lothar.com/wormhole/text-or-file-xfer';
@@ -14,31 +15,27 @@ const factory = new WormholeClient(url, appid);
 
 async function main () {
   // TODO replace this with a library that does this, if there exists one that isn't awful
-  switch (process.argv[2]) {
-    case '--help': {
-      usage(0);
-    }
-    case 'send': {
-      if (process.argv.length !== 3) {
-        usage();
-      }
+   if (argv.help) return usage(0);
+   switch (argv._[0]) {
+     case 'send':
+       if (argv._.length !== 1) {
+         usage();
+       }
 
-      let code = await factory.getCode()
-      console.log('wormhole code:', code)
+       let code = await factory.getCode(argv.lang)
+       console.log('wormhole code:', code)
 
-      let wormhole = await factory.announce(code)
+       let wormhole = await factory.announce(code)
 
-      console.log('connected! type something')
+       console.log('connected! type something')
 
-      process.stdin.on('data', async (data) => {
-        wormhole.send({ offer: { message: data.toString() }});
-        let msg = await wormhole.receive()
-        console.log(msg)
-        process.exit(0)
-      })
-      break;
-    }
-
+       process.stdin.on('data', async (data) => {
+         wormhole.send({ offer: { message: data.toString() } });
+         let msg = await wormhole.receive()
+         console.log(msg)
+         process.exit(0)
+       })
+       break;
     case 'receive': {
       if (process.argv.length !== 4) {
         usage();

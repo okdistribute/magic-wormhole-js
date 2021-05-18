@@ -1,7 +1,10 @@
 let rendezvous = require('./lib/rendezvous.js');
 let unencrypted = require('./lib/unencrypted.js');
 let encrypted = require('./lib/encrypted.js');
-let diceware = require('eff-diceware-passphrase');
+let bip = require('bip39')
+let path = require('path')
+let fs = require('fs')
+let crypto = require('crypto')
 
 let { decodeAscii, encodeAscii } = require('./lib/util.js');
 
@@ -24,12 +27,14 @@ class SecureWormhole {
   async checkVersion (app_versions = {}) {
     this.wormhole.send('version', encodeAscii(JSON.stringify({ app_versions: app_versions })))
 
-    let versionBytes = await this.waitForPhase('version');
-    if (versionBytes === null) {
-      throw new Error('failed to establish secure channel');
-    }
-    let theirVersion = decodeAscii(versionBytes);
-    return theirVersion
+    this.waitForPhase('version').then((versionBytes) => {
+      if (versionBytes === null) {
+        throw new Error('failed to establish secure channel');
+      } else { 
+        let theirVersion = decodeAscii(versionBytes);
+        console.log('got their version', theirVersion)
+      }
+    })
   }
 
 
@@ -55,14 +60,28 @@ class WormholeClient {
   async _createWormhole (unencryptedChannel, password) {
     let connection = await encrypted.initialize(unencryptedChannel, this.side, password)
     let wormhole = new SecureWormhole(connection)
+    console.log('checking version')
     await wormhole.checkVersion()
     return wormhole
   }
 
-  async getCode () {
+  _getPassword (lang) {
+    let english
+    if (lang) {
+      bip.setDefaultWordlist(lang)
+    } else {
+      english = fs.readFileSync(path.join('lib', 'wordlist_en.txt')).toString().split('\n')
+    }
+    let passwordPieces = bip.entropyToMnemonic(crypto.randomBytes(32), english).split(' ')
+    let password = passwordPieces.filter(p => p !== '').slice(0, 2)
+    if (password.length < 2) return this._getPassword(lang)
+    else return password.join('-')
+  }
+
+  async getCode (lang) {
     this.rendezvousChannel = await rendezvous.init(this.url);
     this.unencryptedChannel = await unencrypted.initSender(this.rendezvousChannel, this.side)
-    let password = diceware.entropy(16).join('-')
+    let password = this._getPassword(lang)
     let code = this.unencryptedChannel.nameplate + '-' + password
     return code
   }

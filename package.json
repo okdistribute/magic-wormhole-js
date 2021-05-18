@@ -23,10 +23,12 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@aws-crypto/hkdf-node": "^1.0.0",
-    "eff-diceware-passphrase": "github:okdistribute/eff-diceware-passphrase#browser",
+    "bip39": "^3.0.4",
     "isomorphic-ws": "^4.0.1",
     "tweetnacl": "^1.0.1",
     "ws": "^7.2.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "minimist": "^1.2.5"
+  }
 }
