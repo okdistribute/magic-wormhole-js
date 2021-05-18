@@ -75,7 +75,9 @@ function usage(code = 1) {
   console.log(`Usage: node ${process.argv[1]} [command]
 
 Commands:
-  send            send sample text over wormhole
-  receive <code>  receive text over wormhole`);
+  send [--lang]   send text over wormhole
+  receive <code>  receive text over wormhole
+
+Language: --lang <LANG> can be one of italian, chinese_simplified, japanese, french, korean, czech, portuguese, or chinese_traditional`);
   process.exit(code);
 }

@@ -15,15 +15,23 @@ to install dependencies, then
 ```
 node cli.js send-demo
 ```
-will send the text "example" using a trivial password and
 
+will open a wormhole with a password, and once the receiver has entered the code, you can start typing into the terminal and hit enter to send the text to the recevier.
+
+
+To enter the code, type
 
 ```
 node cli.js receive 0-wormhole-code
 ```
-will receive text.
 
 These interoperate with the python implementation, so you can receive text sent by `send-demo` using `wormhole receive --only-text 0-wormhole-code` and send text to be received by `receive` using `wormhole send --text example`.
+
+
+## Language
+
+To change the language, use `--lang=LANGUAGE` where LANGUAGE can be any of: italian, chinese_simplified, japanese, french, korean, czech, portuguese, or chinese_traditional
+
 
 
 ## Usage with `npx`
